@@ -64,8 +64,8 @@ for e in range(args['epochs']):
     with torch.no_grad():
         for i, batch in enumerate(val_loader, 0):
             data_dict = dict()
-            data_dict['caption_inputs'] = batch[0].float().to(device)
-            data_dict['user'] = batch[1].float().to(device)
+            data_dict['caption_and_user_inputs'] = batch[0].float().to(device)
+            data_dict['user_input'] = batch[1].float().to(device)
             data_dict['image_inputs'] = batch[2].float().to(device)
             labels = batch[3].type(torch.LongTensor).to(device)
             outputs = model(data_dict)

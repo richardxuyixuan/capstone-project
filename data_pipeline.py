@@ -31,7 +31,7 @@ class someDataset(Data.Dataset):
     def __init__(self, caption_data, user_feats, img_data, label, ad_index, user_index):
         self.caption_data = caption_data
         self.user_feats = user_feats
-        self.label = label
+        self.label = label - 1
         self.user_index = user_index
         self.ad_index = ad_index
         self.preprocess = models.ResNet50_Weights.DEFAULT.transforms()
@@ -41,7 +41,7 @@ class someDataset(Data.Dataset):
         return len(self.caption_data)
 
     def __getitem__(self, index):
-        return self.caption_data[index], self.user[self.user_index[index]], self.img_data[self.ad_index[index]], \
+        return self.caption_data[index], self.user_feats[self.user_index[index]], self.img_data[self.ad_index[index]], \
                self.label[index]
 
 def get_data(caption_version, args):
@@ -122,7 +122,7 @@ def get_data(caption_version, args):
                 # the 1st 141 dims are user_features, the last 768 dims are captions
         X_caption = np.squeeze(np.array(X_caption))
         X_caption = torch.from_numpy(X_caption)
-
+        X_user = np.array(X_user)
         if cv == "train":
             X_user_train = X_user
             X_caption_train = X_caption
@@ -146,14 +146,15 @@ def get_data(caption_version, args):
     ad_idx_test = np.array(ad_idx_test)
     ad_idx_train = np.array(ad_idx_train)
 
+
     train_loader = Data.DataLoader(
-        someDataset(X_caption_train, X_user_train, tensor_images, y_train, ad_idx_train, user_idx_train), shuffle=True,
+        someDataset(X_caption_train, features_df, tensor_images, y_train, ad_idx_train, user_idx_train), shuffle=True,
         batch_size=args['batch_size'], drop_last=True)
     val_loader = Data.DataLoader(
-        someDataset(X_caption_val, X_user_val, tensor_images, y_val, ad_idx_val, user_idx_val), shuffle=False,
+        someDataset(X_caption_val, features_df, tensor_images, y_val, ad_idx_val, user_idx_val), shuffle=False,
         batch_size=args['batch_size'], drop_last=True)
     test_loader = Data.DataLoader(
-        someDataset(X_caption_test, X_user_test, tensor_images, y_test, ad_idx_test, user_idx_test), shuffle=False,
+        someDataset(X_caption_test, features_df, tensor_images, y_test, ad_idx_test, user_idx_test), shuffle=False,
         batch_size=args['batch_size'], drop_last=True)
 
     class_weights = compute_class_weight(class_weight='balanced', classes=np.unique(y_train), y=y_train)
