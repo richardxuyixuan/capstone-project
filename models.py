@@ -138,7 +138,7 @@ class early_fusion_cnn_mlp(nn.Module):
 class model_early_fusion(nn.Module):
     def __init__(self, arg, model_ft) -> None:
         super(model_early_fusion, self).__init__()
-        self.image_cnn_mlp = early_fusion_cnn_mlp(arg)
+        self.image_cnn_mlp = early_fusion_cnn_mlp(arg, model_ft)
 
     def forward(self, data_dict):
         scores = self.image_cnn_mlp(data_dict['caption_and_user_inputs'], data_dict['image_inputs'])
