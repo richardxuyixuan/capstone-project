@@ -20,21 +20,20 @@
 1. Try the segmented images  on CNN
 
 **Things to Try**
-Attention mechanism
-Focal loss
-Weight initialization
-Add industry as a feature for ad
-User similarity score
-Item (ad) similarity score
-Data augmentation 
- 
-Different combination of features
- 
-Ordinal logistic regression
-Fix confusion matrix
-P@K with k=number of ads with score 5
-DEMO and trying the model on new dataset that we create ourselves
-Five classes classification
-Serial coeffiicents
-Binary → Binary → binary
-Leranable thresholds
+1. Attention mechanism
+2. Focal loss
+3. Weight initialization
+4. Add industry as a feature for ad
+5. User similarity score
+6. Item (ad) similarity score
+7. Data augmentation 
+8. Different combination of features
+9. Ordinal logistic regression
+10. Fix confusion matrix
+11. P@K with k=number of ads with score 5
+12. DEMO and trying the model on new dataset that we create ourselves
+13. Five classes classification
+14. Serial coeffiicents
+15. Binary → Binary → binary
+16. Leranable thresholds
+17. Add regression score back
