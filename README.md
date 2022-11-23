@@ -18,3 +18,23 @@
 
 **Some strategies to consider:**
 1. Try the segmented images  on CNN
+
+**Things to Try**
+Attention mechanism
+Focal loss
+Weight initialization
+Add industry as a feature for ad
+User similarity score
+Item (ad) similarity score
+Data augmentation 
+ 
+Different combination of features
+ 
+Ordinal logistic regression
+Fix confusion matrix
+P@K with k=number of ads with score 5
+DEMO and trying the model on new dataset that we create ourselves
+Five classes classification
+Serial coeffiicents
+Binary → Binary → binary
+Leranable thresholds
