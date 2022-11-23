@@ -19,9 +19,9 @@
 **Some strategies to consider:**
 1. Try the segmented images  on CNN
 
-**Things to Try**
+**Other Things to Try**
 1. Attention mechanism
-2. Focal loss
+2. Focal loss and other losses
 3. Weight initialization
 4. Add industry as a feature for ad
 5. User similarity score
