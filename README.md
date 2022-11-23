@@ -7,7 +7,7 @@
 4. Run train_pipeline.py
 
 **To test:**
-1. change the codes for L16-18 in eval_pipeline.py
+1. change the codes for L16-18 in eval.py
 2. (optionally) change other args on top of eval_pipeline.py
 3. Run eval_pipeline.py
 
