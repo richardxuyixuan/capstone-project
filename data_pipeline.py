@@ -44,15 +44,15 @@ class someDataset(Data.Dataset):
         return self.caption_data[index], self.user[self.user_index[index]], self.img_data[self.ad_index[index]], \
                self.label[index]
 
-def get_data(directory_path, caption_version, args):
-    caption_bert_path = os.path.join(directory_path, 'Final Data', "caption_1109_bert_128.data")
-    caption_bert_path_2 = os.path.join(directory_path, 'Final Data', "caption_1109_bert_768.data")
+def get_data(caption_version, args):
+    caption_bert_path = os.path.join('Final Data', "caption_1109_bert_128.data")
+    caption_bert_path_2 = os.path.join('Final Data', "caption_1109_bert_768.data")
 
-    score_data_path = os.path.join(directory_path, 'Final Data', "user_scores_normalized.csv")
-    user_feature_path = os.path.join(directory_path, 'Final Data', "one_hot_user_features_complete.csv")
+    score_data_path = os.path.join('Final Data', "user_scores_normalized.csv")
+    user_feature_path = os.path.join('Final Data', "one_hot_user_features_complete.csv")
 
-    img_embs_path = os.path.join(directory_path, 'Final Data', "img_embs_base_512.data")
-    img_path = os.path.join(directory_path, 'Final Data', "ads_no_category")
+    img_embs_path = os.path.join('Final Data', "img_embs_base_512.data")
+    img_path = os.path.join('Final Data', "ads_no_category")
 
     # LOAD DATA
     if caption_version == 'short':
@@ -65,7 +65,7 @@ def get_data(directory_path, caption_version, args):
     captions_bert = captions_bert.detach().numpy()
 
     # Reading image files
-    with open(os.path.join(directory_path, 'Final Data', "Augmented-ads-16_cleaned1.csv"), 'r') as f:
+    with open(os.path.join('Final Data', "Augmented-ads-16_cleaned1.csv"), 'r') as f:
         reader = csv.reader(f, delimiter=',')
         headers = next(reader)
 
@@ -105,7 +105,7 @@ def get_data(directory_path, caption_version, args):
         ad_idx = []
         user_idx = []
         for f in feature_type:
-            idx_path = os.path.join(directory_path, 'Final Data', '{}_{}_split.txt'.format(cv, f))
+            idx_path = os.path.join('Final Data', '{}_{}_split.txt'.format(cv, f))
             idx.append(np.loadtxt(idx_path, dtype=int))
 
         score = scores[idx[1], :][:, idx[0]]

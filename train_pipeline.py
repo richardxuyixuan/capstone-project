@@ -6,7 +6,6 @@ from data_pipeline import get_data
 from utils import initialize_resnet, initialize_model
 # MODEL SETTINGS
 args = dict()                 # batch size for training
-directory_path = '../capstone'
 args['caption_version'] = 'short'  # 'short' or 'long'
 args['model_version'] = 'image_only' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
 args['checkpoint_name'] = 'image_only_lr_1e-2_bs_64.pth'
@@ -22,7 +21,7 @@ args['img_embs_size'] = 128
 args['optimizer'] = 'Adam' # 'Adam or SGD'
 
 # Build data loader
-train_loader, val_loader, _, class_weights = get_data(directory_path, args['caption_version'], args)
+train_loader, val_loader, _, class_weights = get_data(args['caption_version'], args)
 
 # Initialize the model for this run
 model_ft = initialize_resnet(args['model_version'], args['img_embs_size'])
@@ -78,7 +77,7 @@ for e in range(args['epochs']):
     val_acc = 100 * correct / total
     if val_acc > best_val_acc:
       # save model
-      PATH = os.path.join(directory_path, args['checkpoint_name'])
+      PATH = os.path.join(args['checkpoint_name'])
       torch.save(model.state_dict(), PATH)
       best_val_acc=val_acc
     print("Epoch [{}/{}], training loss:{:.5f}, validation loss:{:.5f}, train accuracy:{:.5f}, validation accuracy:{:.5f}".format(e + 1, args['epochs'], np.mean(train_loss),np.mean(val_loss), train_acc, val_acc))
