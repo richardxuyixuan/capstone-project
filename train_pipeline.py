@@ -1,27 +1,28 @@
 import os
 import numpy as np
-
 import torch
-from data_pipeline import get_data
+from data_pipeline import get_data, get_new_data
 from utils import initialize_resnet, initialize_model
+
 # MODEL SETTINGS
 args = dict()                 # batch size for training
 args['caption_version'] = 'short'  # 'short' or 'long'
 args['model_version'] = 'image_only' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
-args['checkpoint_name'] = 'image_only_lr_1e-2_bs_64.pth'
+args['checkpoint_name'] = 'image_only_new_data_lr_1e-2_bs_512.pth'
 
 args['lr'] = 0.01                         # learning rate
 args['weight_decay'] = 1e-5
-args['batch_size'] = 64
+args['batch_size'] = 2
 args['epochs'] = 25
 args['dropout'] = 0.2
-args['output_dim'] = 5                    # number of output classes
+args['output_dim'] = 2                    # number of output classes
 args['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
 args['img_embs_size'] = 128
 args['optimizer'] = 'Adam' # 'Adam or SGD'
 
 # Build data loader
-train_loader, val_loader, _, class_weights = get_data(args['caption_version'], args)
+train_loader, val_loader, _, class_weights = get_new_data(args['caption_version'], args)
+print(len(train_loader.dataset))
 
 # Initialize the model for this run
 model_ft = initialize_resnet(args['model_version'], args['img_embs_size'])
@@ -47,6 +48,7 @@ for e in range(args['epochs']):
         data_dict['user_input'] = batch[1].float().to(device)
         data_dict['image_inputs'] = batch[2].float().to(device)
         labels = batch[3].type(torch.LongTensor).to(device)
+        #labels -= 1
         outputs = model(data_dict)
         loss = criterion(outputs, labels)
         loss.backward()
@@ -68,6 +70,9 @@ for e in range(args['epochs']):
             data_dict['user_input'] = batch[1].float().to(device)
             data_dict['image_inputs'] = batch[2].float().to(device)
             labels = batch[3].type(torch.LongTensor).to(device)
+            labels[labels>=3] = 1
+            labels[labels<3] = 0
+            #labels -= 1
             outputs = model(data_dict)
             loss = criterion(outputs, labels)
             val_loss.append(loss.item())
