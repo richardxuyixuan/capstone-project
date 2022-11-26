@@ -35,6 +35,12 @@ class model_caption_only(nn.Module):
             self.caption_mlp = late_fusion_mlp(arg, 141+128)
         elif arg['caption_version'] == 'long':
             self.caption_mlp = late_fusion_mlp(arg, 141+768)
+        elif arg['caption_version'] == 'old':
+            self.caption_mlp = late_fusion_mlp(arg, 141+768)
+        elif arg['caption_version'] == 'image':
+            self.caption_mlp = late_fusion_mlp(arg, 141+512)
+        elif arg['caption_version'] == 'image_tuned':
+            self.caption_mlp = late_fusion_mlp(arg, 141+512)
 
     def forward(self, data_dict):
         scores = self.caption_mlp(data_dict['caption_and_user_inputs'])

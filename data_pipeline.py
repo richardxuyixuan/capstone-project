@@ -45,21 +45,28 @@ class someDataset(Data.Dataset):
                self.label[index]
 
 def get_new_data(caption_version, args):
+    caption_bert_path_old = os.path.join('Final Data', "caption_bert_768.data")
     caption_bert_path = os.path.join('Final Data', "caption_1109_bert_128.data")
-    caption_bert_path_2 = os.path.join('Final Data', "caption_1109_bert_768.data")
+    caption_bert_path_2 = os.path.join('Final Data', "caption_1109_bert_tuned_768.data")
 
     score_data_path = os.path.join('Final Data', "user_scores_normalized.csv")
     user_feature_path = os.path.join('Final Data', "one_hot_user_features_complete.csv")
 
-    img_embs_path = os.path.join('Final Data', "img_embs_base_512.data")
+    img_embs_based_path = os.path.join('Final Data', "img_embs_base_512.data")
+    img_embs_tuned_path = os.path.join('Final Data', "img_embs_base_512.data")
     img_path = os.path.join('Final Data', "ads_no_category")
     aug_img_path = os.path.join('Final Data', "aug_imgs")
 
     # LOAD DATA
     if caption_version == 'short':
         file = open(caption_bert_path, 'rb')
+    elif caption_version == 'old':
+        file = open(caption_bert_path_old, 'rb')
+    elif caption_version == 'image':
+        file = open(img_embs_based_path, 'rb')
+    elif caption_version == 'image_tuned':
+        file = open(img_embs_tuned_path, 'rb')
     else:
-        print('long')
         file = open(caption_bert_path_2, 'rb')
     captions_bert = pickle.load(file)
     captions_bert = captions_bert.data  # remove recording of gradient
@@ -126,7 +133,7 @@ def get_new_data(caption_version, args):
                 tmp_embed = np.expand_dims(captions_bert[j, :], axis=1)
                 X_caption.append(np.row_stack((tmp_x, tmp_embed)))
                 ad_idx.append(j)
-                # the 1st 141 dims are user_features, the last 768 dims are captions
+                # the 1st 141 dims are user_features, the last dims are captions
         # iterate through augmented data
         for [i, j] in aug_idx:  # i = user idx, j = ad idx
             i = int(i)

@@ -9,7 +9,7 @@ def set_parameter_requires_grad(model, feature_extracting):
         for param in model.parameters():
             param.requires_grad = False
 
-def initialize_resnet(model_version, img_embs_size, feature_extract=True):
+def initialize_resnet(model_version, img_embs_size, feature_extract=False):
     # Initialize these variables which will be set in this if statement. Each of these
     #   variables is model specific.
     model_ft = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V2)
@@ -35,5 +35,6 @@ def initialize_model(arg, class_weights, dataloader, resnet_model):
     elif arg['optimizer'] == 'SGD':
         optimizer = optim.SGD(model.parameters(), lr= arg['lr'], momentum=0.9)
     criterion = nn.CrossEntropyLoss(weight=class_weights)  # WCE
+    # criterion = nn.BCELoss()
     scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=arg['lr'], steps_per_epoch=len(dataloader), epochs=arg['epochs'])
     return model, optimizer, scheduler, criterion
