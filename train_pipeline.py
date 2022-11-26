@@ -70,8 +70,6 @@ for e in range(args['epochs']):
             data_dict['user_input'] = batch[1].float().to(device)
             data_dict['image_inputs'] = batch[2].float().to(device)
             labels = batch[3].type(torch.LongTensor).to(device)
-            labels[labels>=3] = 1
-            labels[labels<3] = 0
             #labels -= 1
             outputs = model(data_dict)
             loss = criterion(outputs, labels)
@@ -85,4 +83,5 @@ for e in range(args['epochs']):
       PATH = os.path.join(args['checkpoint_name'])
       torch.save(model.state_dict(), PATH)
       best_val_acc=val_acc
+      print("model saved")
     print("Epoch [{}/{}], training loss:{:.5f}, validation loss:{:.5f}, train accuracy:{:.5f}, validation accuracy:{:.5f}".format(e + 1, args['epochs'], np.mean(train_loss),np.mean(val_loss), train_acc, val_acc))
