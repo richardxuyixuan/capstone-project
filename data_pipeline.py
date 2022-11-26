@@ -44,7 +44,7 @@ class someDataset(Data.Dataset):
         return self.caption_data[index], self.user_feats[self.user_index[index]], self.img_data[self.ad_index[index]], \
                self.label[index]
 
-def get_data(caption_version, args):
+def get_new_data(caption_version, args):
     caption_bert_path = os.path.join('Final Data', "caption_1109_bert_128.data")
     caption_bert_path_2 = os.path.join('Final Data', "caption_1109_bert_768.data")
 

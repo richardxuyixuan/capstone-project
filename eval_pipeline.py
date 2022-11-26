@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sn
 import pandas as pd
 
-from data_pipeline import get_data, get_new_data
+from data_pipeline import get_new_data
 from utils import initialize_resnet, initialize_model
 # MODEL SETTINGS
 args = dict()                 # batch size for training

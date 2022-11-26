@@ -1,14 +1,15 @@
 import os
 import numpy as np
 import torch
-from data_pipeline import get_data, get_new_data
+from data_pipeline import get_new_data
 from utils import initialize_resnet, initialize_model
 
 # MODEL SETTINGS
 args = dict()                 # batch size for training
 args['caption_version'] = 'short'  # 'short' or 'long'
 args['model_version'] = 'image_only' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
-args['checkpoint_name'] = 'image_only_lr_1e-2_bs_64.pth'
+args['checkpoint_name'] = 'test'
+    # 'image_only_lr_1e-2_bs_64.pth'
 
 args['lr'] = 0.01                         # learning rate
 args['weight_decay'] = 1e-5
