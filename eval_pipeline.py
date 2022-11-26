@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import seaborn as sn
 import pandas as pd
 
-from data_pipeline import get_data
+from data_pipeline import get_data, get_new_data
 from utils import initialize_resnet, initialize_model
 # MODEL SETTINGS
 args = dict()                 # batch size for training
@@ -19,16 +19,16 @@ args['checkpoint_name'] = 'image_only_lr_1e-2_bs_64.pth'
 
 args['lr'] = 0.01                         # learning rate
 args['weight_decay'] = 1e-5
-args['batch_size'] = 64
+args['batch_size'] = 1
 args['epochs'] = 25
 args['dropout'] = 0.2
-args['output_dim'] = 5                    # number of output classes
+args['output_dim'] = 2                    # number of output classes
 args['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
 args['img_embs_size'] = 128
 args['optimizer'] = 'Adam' # 'Adam or SGD'
 
 # Build data loader
-train_loader, _, test_loader, class_weights = get_data(args['caption_version'], args)
+train_loader, _, test_loader, class_weights = get_new_data(args['caption_version'], args)
 
 # Initialize the model for this run
 model_ft = initialize_resnet(args['model_version'], args['img_embs_size'])
@@ -59,11 +59,8 @@ with torch.no_grad():
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
 test_acc = 100 * correct / total
-
-
 y_true= [y_true[i][0] for i in range(len(y_pred))]
 y_pred= [y_pred[i][0] for i in range(len(y_pred))]
-
 acc = accuracy_score(y_true, y_pred)
 f1_score = f1_score(y_true, y_pred, average='weighted')
 
@@ -71,10 +68,10 @@ print("Test accuracy:{:.5f}".format(acc))
 print("F1 score:{:.5f}".format(f1_score))
 
 # constant for classes
-classes = ('1','2', '3', '4', '5')
+classes = ('1','2')
 # Build confusion matrix
 cf_matrix = confusion_matrix(y_true, y_pred)
-df_cm = pd.DataFrame(cf_matrix/np.sum(cf_matrix) *10, index = [i for i in classes],
+df_cm = pd.DataFrame(cf_matrix.astype('float') / cf_matrix.sum(axis=1)[:, np.newaxis], index = [i for i in classes],
                     columns = [i for i in classes])
 ax= plt.subplot()
 sn.heatmap(df_cm, annot=True)

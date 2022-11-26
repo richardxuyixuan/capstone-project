@@ -1,9 +1,9 @@
 import os
 import numpy as np
-
 import torch
-from data_pipeline import get_data
+from data_pipeline import get_data, get_new_data
 from utils import initialize_resnet, initialize_model
+
 # MODEL SETTINGS
 args = dict()                 # batch size for training
 args['caption_version'] = 'short'  # 'short' or 'long'
@@ -15,13 +15,13 @@ args['weight_decay'] = 1e-5
 args['batch_size'] = 64
 args['epochs'] = 25
 args['dropout'] = 0.2
-args['output_dim'] = 5                    # number of output classes
+args['output_dim'] = 2                    # number of output classes
 args['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
 args['img_embs_size'] = 128
 args['optimizer'] = 'Adam' # 'Adam or SGD'
 
 # Build data loader
-train_loader, val_loader, _, class_weights = get_data(args['caption_version'], args)
+train_loader, val_loader, _, class_weights = get_new_data(args['caption_version'], args)
 
 # Initialize the model for this run
 model_ft = initialize_resnet(args['model_version'], args['img_embs_size'])

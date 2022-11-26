@@ -31,7 +31,7 @@ class someDataset(Data.Dataset):
     def __init__(self, caption_data, user_feats, img_data, label, ad_index, user_index):
         self.caption_data = caption_data
         self.user_feats = user_feats
-        self.label = label - 1
+        self.label = label
         self.user_index = user_index
         self.ad_index = ad_index
         self.preprocess = models.ResNet50_Weights.DEFAULT.transforms()
@@ -53,6 +53,7 @@ def get_data(caption_version, args):
 
     img_embs_path = os.path.join('Final Data', "img_embs_base_512.data")
     img_path = os.path.join('Final Data', "ads_no_category")
+    aug_img_path = os.path.join('Final Data', "aug_imgs")
 
     # LOAD DATA
     if caption_version == 'short':
@@ -73,16 +74,23 @@ def get_data(caption_version, args):
 
     images = []
 
-    # Load in the images
-    print(img_path)
-
-    # Reshape image files to same dim (500, 500, 3)
+    # Reshape image files to same dim (224, 224, 3)
     for filepath in ads:
         img = Image.open(img_path + '/' + filepath + '.png')
         new_image = img.convert('RGB')
         new_image = new_image.resize((224, 224))
         new_image = np.asarray(new_image)
         images.append(new_image)
+    print("total number of raw images: ", len(images))
+    offset = len(images)
+    # load augmentation images
+    for filepath in ads:
+        img = Image.open(aug_img_path + '/' + filepath + '.png')
+        new_image = img.convert('RGB')
+        new_image = new_image.resize((224, 224))
+        new_image = np.asarray(new_image)
+        images.append(new_image)
+    print("total number of images after augmentation: ", len(images))
 
     images = np.array(images)
     tensor_images = torch.from_numpy(images)
@@ -90,7 +98,7 @@ def get_data(caption_version, args):
 
     scores = pd.read_csv(score_data_path).to_numpy()
     scores = scores[:, 1:]  # filter out the first column, which is faulty
-    scores *= 5
+    scores = (scores >= 0.6).astype(int)
 
     # user features
     features_df = pd.read_csv(user_feature_path).to_numpy()
@@ -100,43 +108,49 @@ def get_data(caption_version, args):
     feature_type = ["ad", "user"]
     for cv in cv_type:
         idx = []
-        X_caption = []
-        X_user = []
-        ad_idx = []
-        user_idx = []
+        X_caption = [] # caption embedding, size = train/val/test size
+        ad_idx = [] # ad_idx: ad index for each training sample, size =  train/val/test size
+        user_idx = [] # user_idx_train: user index for each training sample , size = training size
         for f in feature_type:
             idx_path = os.path.join('Final Data', '{}_{}_split.txt'.format(cv, f))
             idx.append(np.loadtxt(idx_path, dtype=int))
-
+            aug_idx_path = os.path.join('Final Data', '{}_aug_split.csv'.format(cv))
+            aug_idx = np.loadtxt(aug_idx_path, delimiter=',')
         score = scores[idx[1], :][:, idx[0]]
-        score = score.reshape(-1, )
-        # Score: User #1 - 300 images score; User #2 - 300 images score etc.
+        score = score.reshape(-1, ) # scores, size =  train/val/test size
+        # iterate through raw data
         for i in idx[1]:
             tmp_x = np.expand_dims(features_df[i, :], axis=1)
-            X_user.append(tmp_x)
             user_idx.extend([i] * len(idx[0]))
-            for j in idx[0]:
+            for j in idx[0]: # image
                 tmp_embed = np.expand_dims(captions_bert[j, :], axis=1)
                 X_caption.append(np.row_stack((tmp_x, tmp_embed)))
                 ad_idx.append(j)
                 # the 1st 141 dims are user_features, the last 768 dims are captions
+        # iterate through augmented data
+        for [i, j] in aug_idx:  # i = user idx, j = ad idx
+            i = int(i)
+            j = int(j)
+            tmp_embed = np.expand_dims(captions_bert[j, :], axis=1)
+            tmp_x = np.expand_dims(features_df[i, :], axis=1)
+            X_caption.append(np.row_stack((tmp_x, tmp_embed)))
+            score = np.append(score, scores[i][j])
+            user_idx.append(i)
+            # ad_idx.append(m+unique_ad_idx.index(j))
+            ad_idx.append(j + offset)
         X_caption = np.squeeze(np.array(X_caption))
         X_caption = torch.from_numpy(X_caption)
-        X_user = np.array(X_user)
         if cv == "train":
-            X_user_train = X_user
             X_caption_train = X_caption
             y_train = score
             ad_idx_train = ad_idx
             user_idx_train = user_idx
         elif cv == "val":
-            X_user_val = X_user
             X_caption_val = X_caption
             y_val = score
             ad_idx_val = ad_idx
             user_idx_val = user_idx
         elif cv == "test":
-            X_user_test = X_user
             X_caption_test = X_caption
             y_test = score
             ad_idx_test = ad_idx
@@ -145,7 +159,6 @@ def get_data(caption_version, args):
     ad_idx_val = np.array(ad_idx_val)
     ad_idx_test = np.array(ad_idx_test)
     ad_idx_train = np.array(ad_idx_train)
-
 
     train_loader = Data.DataLoader(
         someDataset(X_caption_train, features_df, tensor_images, y_train, ad_idx_train, user_idx_train), shuffle=True,
