@@ -203,3 +203,67 @@ class model_late_fusion(nn.Module):
         caption_scores = self.caption_mlp(data_dict['caption_and_user_inputs'])
         scores = image_scores + caption_scores
         return scores
+
+class early_fusion_se_cnn_mlp(nn.Module):
+    def __init__(self, arg, model_ft) -> None:
+        super(early_fusion_se_cnn_mlp, self).__init__()
+        if arg['caption_version'] == 'short':
+            input_dim = 2317
+        elif arg['caption_version'] == 'long':
+            input_dim = 2317-128+768
+        output_dim = arg['output_dim']
+        self.conv_layer = model_ft
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(input_dim, 1024, kernel_size=(1, 1), stride=(1, 1), bias=False),
+            nn.BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.Conv2d(1024, 512, kernel_size=(1, 1), stride=(1, 1), bias=False),
+            nn.BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.Conv2d(512, 256, kernel_size=(1, 1), stride=(1, 1), bias=False),
+            nn.BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.Conv2d(256, 128, kernel_size=(1, 1), stride=(1, 1), bias=False),
+            nn.BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.Conv2d(128, 64, kernel_size=(1, 1), stride=(1, 1), bias=False),
+            nn.BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.Conv2d(64, 32, kernel_size=(1, 1), stride=(1, 1), bias=False),
+            nn.BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True),
+            nn.ReLU(inplace=True))
+        self.mlp = nn.Sequential(
+            nn.Linear(32*7*7, 32*5*5),
+            nn.BatchNorm1d(num_features=32*5*5),
+            nn.ReLU(),
+            nn.Linear(32*5*5, 32*3*3),
+            nn.BatchNorm1d(num_features=32*3*3),
+            nn.ReLU(),
+            nn.Linear(32*3*3, 32*3*3),
+            nn.BatchNorm1d(num_features=32*3*3),
+            nn.ReLU(),
+            nn.Linear(32*3*3, 32),
+            nn.BatchNorm1d(num_features=32),
+            nn.ReLU(),
+            nn.Linear(32, output_dim)
+        )
+        self.se_0 = nn.AdaptiveAvgPool2d((1, 1))
+        self.se = nn.Sequential(
+            nn.Linear(input_dim, 2*input_dim),
+            nn.ReLU(),
+            nn.Linear(2*input_dim, input_dim),
+            nn.Sigmoid()
+        )
+    def forward(self, caption_and_user, image):
+        x = image
+        x = self.conv_layer(x)
+        x = torch.cat((x, caption_and_user.unsqueeze(-1).unsqueeze(-1).repeat(1,1,x.shape[-2], x.shape[-1])),dim=1)
+        x1 = x * self.se(self.se_0(x).squeeze(-1).squeeze(-1)).unsqueeze(-1).unsqueeze(-1)
+        x1 = self.conv1(x1)
+        x1 = x1.reshape(x1.shape[0], -1)
+        x1 = self.mlp(x1)
+        return x1
+
+class model_early_fusion_se(nn.Module):
+    def __init__(self, arg, model_ft) -> None:
+        super(model_early_fusion_se, self).__init__()
+        self.image_cnn_mlp = early_fusion_se_cnn_mlp(arg, model_ft)
+
+    def forward(self, data_dict):
+        scores = self.image_cnn_mlp(data_dict['caption_and_user_inputs'], data_dict['image_inputs'])
+        return scores

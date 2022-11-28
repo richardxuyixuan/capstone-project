@@ -20,6 +20,17 @@
 1. Try the segmented images  on CNN
 
 **Other Things to Try**
+
+Might need to retrain early and late fusion without PCA
+
+Attention
+
+Remove learning scheduler
+
+Remove augmented data
+
+
+
 1. Attention mechanism
 2. Focal loss and other losses
 3. Weight initialization
