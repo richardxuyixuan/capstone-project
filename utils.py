@@ -48,6 +48,9 @@ def initialize_model(arg, class_weights, dataloader, resnet_model):
             )
         else:
             criterion = nn.CrossEntropyLoss(weight=class_weights)  # WCE
+    elif 'use_bce' in arg.keys():
+        if arg['use_bce'] == True:
+            criterion = nn.BCEWithLogitsLoss() # BCE
     else:
         criterion = nn.CrossEntropyLoss(weight=class_weights)  # WCE
     # criterion = nn.BCELoss()
