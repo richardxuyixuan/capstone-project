@@ -5,6 +5,11 @@ from sklearn.metrics import accuracy_score, r2_score, mean_squared_error
 
 from sklearn.metrics import f1_score
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import roc_curve
+from sklearn.metrics import RocCurveDisplay
+from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import PrecisionRecallDisplay
+from sklearn.metrics import auc
 import matplotlib.pyplot as plt
 import seaborn as sn
 import pandas as pd
@@ -423,6 +428,85 @@ def eval(args):
     plt.savefig(args['checkpoint_name']+'.png')
 
 
+def roc(args):
+    print(args['checkpoint_name'])
+    # Build data loader
+    if args['data'] == 'augmented':
+        train_loader, _, test_loader, class_weights = get_new_data(args['caption_version'], args)
+    elif args['data'] == 'non_augmented':
+        train_loader, _, test_loader, class_weights = get_data(args['caption_version'], args)
+
+    # Initialize the model for this run
+    model_ft = initialize_resnet(args['model_version'], args['img_embs_size'])
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    class_weights = class_weights.to(device)
+    model, optimizer, scheduler, criterion = initialize_model(args, class_weights, train_loader, model_ft)
+    model.to(device)
+
+    correct = 0
+    total = 0
+    y_pred = []
+    y_true = []
+    model.load_state_dict(torch.load(args['checkpoint_name']))
+    model.eval()
+
+    with torch.no_grad():
+        for i, batch in enumerate(test_loader, 0):
+            data_dict = dict()
+            data_dict['caption_and_user_inputs'] = batch[0].float().to(device)
+            data_dict['user_input'] = batch[1].float().to(device)
+            data_dict['image_inputs'] = batch[2].float().to(device)
+            if 'use_bce' in args.keys():
+                if args['use_bce'] == True:
+                    labels = batch[3].float().to(device).unsqueeze(-1)
+                else:
+                    labels = batch[3].type(torch.LongTensor).to(device)
+            else:
+                labels = batch[3].type(torch.LongTensor).to(device)
+            outputs = model(data_dict)
+            if 'use_bce' in args.keys():
+                if args['use_bce'] == True:
+                    predicted = torch.sigmoid(outputs)
+                else:
+                    _, predicted = torch.max(outputs.data, 1)
+            else:
+                _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            #correct += (predicted == labels).sum().item()
+            y_pred.append(predicted.cpu().numpy())
+            y_true.append(labels.cpu().numpy())
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+    test_acc = 100 * correct / total
+    y_true= [y_true[i][0] for i in range(len(y_pred))]
+    y_pred= [y_pred[i][0] for i in range(len(y_pred))]
+
+    # constant for classes
+    classes = ('1','2')
+    # Build roc curve
+    prec, recall, _ = precision_recall_curve(y_true, y_pred)
+    pr_display = PrecisionRecallDisplay(precision=prec, recall=recall).plot()
+    
+    fpr, tpr, _ = roc_curve(y_true, y_pred)
+    roc_display = RocCurveDisplay(fpr=fpr, tpr=tpr).plot()
+    
+    auc_pr = auc(recall, prec)
+    auc_roc = auc(fpr, tpr)
+    
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 8))
+
+    pr_display.plot(ax=ax1)
+    roc_display.plot(ax=ax2)
+    
+
+    ax1.set_title('General Precision-Recall');
+    ax2.set_title('General ROC');
+    plt.grid()
+    plt.savefig(args['checkpoint_name']+'_curve.png')
+    print("auc for Precision-Recall: ", auc_pr)
+    print("auc for ROC: ", auc_roc)
+
 # eval(args)
 # eval(args1)
 # eval(args2)
@@ -441,4 +525,4 @@ def eval(args):
 # eval(args4n)
 # eval(args5n)
 # eval(args7n)
-eval(args6b)
+roc(args6b)
