@@ -2,7 +2,7 @@ import torch
 from torch import optim
 import torch.nn as nn
 from torchvision import datasets, models, transforms
-from models import model_image_only, model_caption_only, model_early_fusion, model_late_fusion, model_early_fusion_se
+from models import model_image_only, model_caption_only, model_early_fusion, model_late_fusion, model_early_fusion_se, model_baseline, model_baseline_user_bert
 
 def set_parameter_requires_grad(model, feature_extracting):
     if feature_extracting:
@@ -32,6 +32,11 @@ def initialize_model(arg, class_weights, dataloader, resnet_model):
         model =model_early_fusion_se(arg, resnet_model)
     elif arg['model_version'] == 'late_fusion':
         model = model_late_fusion(arg, resnet_model)
+    elif arg['model_version'] == 'baseline':
+        model = model_baseline(arg)
+    elif arg['model_version'] == 'baseline_user_bert':
+        model = model_baseline_user_bert(arg)
+
     if arg['optimizer'] == 'Adam':
         optimizer = optim.Adam(model.parameters(), lr=arg['lr'], weight_decay=arg['weight_decay'])
     elif arg['optimizer'] == 'SGD':
@@ -53,6 +58,11 @@ def initialize_model(arg, class_weights, dataloader, resnet_model):
             criterion = nn.BCEWithLogitsLoss() # BCE
     else:
         criterion = nn.CrossEntropyLoss(weight=class_weights)  # WCE
+
+    if 'no_class_weights' in arg.keys():
+        if arg['no_class_weights']:
+            criterion = nn.CrossEntropyLoss()
+
     # criterion = nn.BCELoss()
     if arg['use_scheduler']:
         scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=arg['lr'], steps_per_epoch=len(dataloader), epochs=arg['epochs'])

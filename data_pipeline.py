@@ -28,7 +28,7 @@ from PIL import Image
 
 
 class someDataset(Data.Dataset):
-    def __init__(self, caption_data, user_feats, img_data, label, ad_index, user_index):
+    def __init__(self, caption_data, user_feats, img_data, img_class, label, ad_index, user_index):
         self.caption_data = caption_data
         self.user_feats = user_feats
         self.label = label
@@ -36,12 +36,13 @@ class someDataset(Data.Dataset):
         self.ad_index = ad_index
         self.preprocess = models.ResNet50_Weights.DEFAULT.transforms()
         self.img_data = self.preprocess(img_data)
+        self.img_class = img_class
 
     def __len__(self):
         return len(self.caption_data)
 
     def __getitem__(self, index):
-        return self.caption_data[index], self.user_feats[self.user_index[index]], self.img_data[self.ad_index[index]], \
+        return self.caption_data[index], self.user_feats[self.user_index[index]], self.img_data[self.ad_index[index]], self.img_class[self.ad_index[index]], \
                self.label[index]
 
 def get_data(caption_version, args):
@@ -54,6 +55,7 @@ def get_data(caption_version, args):
 
     img_embs_based_path = os.path.join('Final Data', "img_embs_base_512.data")
     img_embs_tuned_path = os.path.join('Final Data', "img_embs_base_512.data")
+    user_bert_path = os.path.join('Final Data', "user_bert_128.data")
     img_path = os.path.join('Final Data', "ads_no_category")
 
     # LOAD DATA
@@ -71,6 +73,10 @@ def get_data(caption_version, args):
     captions_bert = captions_bert.data  # remove recording of gradient
     captions_bert = captions_bert.detach().numpy()
 
+    file = open(user_bert_path, 'rb')
+    user_bert = pickle.load(file)
+    user_bert = user_bert.data  # remove recording of gradient
+    user_bert = user_bert.detach().numpy()
     # Reading image files
     with open(os.path.join('Final Data', "Augmented-ads-16_cleaned1.csv"), 'r') as f:
         reader = csv.reader(f, delimiter=',')
@@ -80,8 +86,17 @@ def get_data(caption_version, args):
 
     images = []
 
+    ad_type_dict = dict()
+    with open(os.path.join('Final Data', "ads_category-text_pytesseract.csv"), 'r') as f:
+        reader = csv.reader(f, delimiter=',')
+        for row in reader:
+            if row[0] != 'name':
+                ad_type_dict[row[0][:-4]] = row[1]
+
+    ad_type_list = list()
     # Reshape image files to same dim (224, 224, 3)
     for filepath in ads:
+        ad_type_list.append(int(ad_type_dict[filepath]))
         img = Image.open(img_path + '/' + filepath + '.png')
         new_image = img.convert('RGB')
         new_image = new_image.resize((224, 224))
@@ -95,11 +110,21 @@ def get_data(caption_version, args):
 
     scores = pd.read_csv(score_data_path).to_numpy()
     scores = scores[:, 1:]  # filter out the first column, which is faulty
-    scores = (scores >= 0.6).astype(int)
+    if args['output_dim'] == 5:
+        scores = scores * 5 - 1
+    else:
+        scores = (scores >= 0.6).astype(int)
 
     # user features
-    features_df = pd.read_csv(user_feature_path).to_numpy()
-    features_df = features_df[:, 3:]  # filter out the first three columns, which are faulty
+    if 'user_bert' in args.keys():
+        if args['user_bert']:
+            features_df = user_bert
+        else:
+            features_df = pd.read_csv(user_feature_path).to_numpy()
+            features_df = features_df[:, 3:]  # filter out the first three columns, which are faulty
+    else:
+        features_df = pd.read_csv(user_feature_path).to_numpy()
+        features_df = features_df[:, 3:]  # filter out the first three columns, which are faulty
 
     cv_type = ["train", "val", "test"]
     feature_type = ["ad", "user"]
@@ -144,15 +169,16 @@ def get_data(caption_version, args):
     ad_idx_val = np.array(ad_idx_val)
     ad_idx_test = np.array(ad_idx_test)
     ad_idx_train = np.array(ad_idx_train)
+    ad_type_list = np.array(ad_type_list)
 
     train_loader = Data.DataLoader(
-        someDataset(X_caption_train, features_df, tensor_images, y_train, ad_idx_train, user_idx_train), shuffle=True,
+        someDataset(X_caption_train, features_df, tensor_images, ad_type_list, y_train, ad_idx_train, user_idx_train), shuffle=True,
         batch_size=args['batch_size'], drop_last=True)
     val_loader = Data.DataLoader(
-        someDataset(X_caption_val, features_df, tensor_images, y_val, ad_idx_val, user_idx_val), shuffle=False,
+        someDataset(X_caption_val, features_df, tensor_images, ad_type_list, y_val, ad_idx_val, user_idx_val), shuffle=False,
         batch_size=args['batch_size'], drop_last=True)
     test_loader = Data.DataLoader(
-        someDataset(X_caption_test, features_df, tensor_images, y_test, ad_idx_test, user_idx_test), shuffle=False,
+        someDataset(X_caption_test, features_df, tensor_images, ad_type_list, y_test, ad_idx_test, user_idx_test), shuffle=False,
         batch_size=args['batch_size'], drop_last=True)
 
     class_weights = compute_class_weight(class_weight='balanced', classes=np.unique(y_train), y=y_train)
@@ -170,6 +196,7 @@ def get_new_data(caption_version, args):
 
     img_embs_based_path = os.path.join('Final Data', "img_embs_base_512.data")
     img_embs_tuned_path = os.path.join('Final Data', "img_embs_base_512.data")
+    user_bert_path = os.path.join('Final Data', "user_bert_128.data")
     img_path = os.path.join('Final Data', "ads_no_category")
     aug_img_path = os.path.join('Final Data', "aug_imgs")
 
@@ -188,6 +215,11 @@ def get_new_data(caption_version, args):
     captions_bert = captions_bert.data  # remove recording of gradient
     captions_bert = captions_bert.detach().numpy()
 
+    file = open(user_bert_path, 'rb')
+    user_bert = pickle.load(file)
+    user_bert = user_bert.data  # remove recording of gradient
+    user_bert = user_bert.detach().numpy()
+
     # Reading image files
     with open(os.path.join('Final Data', "Augmented-ads-16_cleaned1.csv"), 'r') as f:
         reader = csv.reader(f, delimiter=',')
@@ -197,8 +229,17 @@ def get_new_data(caption_version, args):
 
     images = []
 
+    ad_type_dict = dict()
+    with open(os.path.join('Final Data', "ads_category-text_pytesseract.csv"), 'r') as f:
+        reader = csv.reader(f, delimiter=',')
+        for row in reader:
+            if row[0] != 'name':
+                ad_type_dict[row[0][:-4]] = row[1]
+
+    ad_type_list = list()
     # Reshape image files to same dim (224, 224, 3)
     for filepath in ads:
+        ad_type_list.append(int(ad_type_dict[filepath]))
         img = Image.open(img_path + '/' + filepath + '.png')
         new_image = img.convert('RGB')
         new_image = new_image.resize((224, 224))
@@ -208,6 +249,7 @@ def get_new_data(caption_version, args):
     offset = len(images)
     # load augmentation images
     for filepath in ads:
+        ad_type_list.append(int(ad_type_dict[filepath]))
         img = Image.open(aug_img_path + '/' + filepath + '.png')
         new_image = img.convert('RGB')
         new_image = new_image.resize((224, 224))
@@ -221,11 +263,21 @@ def get_new_data(caption_version, args):
 
     scores = pd.read_csv(score_data_path).to_numpy()
     scores = scores[:, 1:]  # filter out the first column, which is faulty
-    scores = (scores >= 0.6).astype(int)
+    if args['output_dim'] == 5:
+        scores = scores * 5 - 1
+    else:
+        scores = (scores >= 0.6).astype(int)
 
     # user features
-    features_df = pd.read_csv(user_feature_path).to_numpy()
-    features_df = features_df[:, 3:]  # filter out the first three columns, which are faulty
+    if 'user_bert' in args.keys():
+        if args['user_bert']:
+            features_df = user_bert
+        else:
+            features_df = pd.read_csv(user_feature_path).to_numpy()
+            features_df = features_df[:, 3:]  # filter out the first three columns, which are faulty
+    else:
+        features_df = pd.read_csv(user_feature_path).to_numpy()
+        features_df = features_df[:, 3:]  # filter out the first three columns, which are faulty
 
     cv_type = ["train", "val", "test"]
     feature_type = ["ad", "user"]
@@ -282,15 +334,16 @@ def get_new_data(caption_version, args):
     ad_idx_val = np.array(ad_idx_val)
     ad_idx_test = np.array(ad_idx_test)
     ad_idx_train = np.array(ad_idx_train)
+    ad_type_list = np.array(ad_type_list)
 
     train_loader = Data.DataLoader(
-        someDataset(X_caption_train, features_df, tensor_images, y_train, ad_idx_train, user_idx_train), shuffle=True,
+        someDataset(X_caption_train, features_df, tensor_images, ad_type_list, y_train, ad_idx_train, user_idx_train), shuffle=True,
         batch_size=args['batch_size'], drop_last=True)
     val_loader = Data.DataLoader(
-        someDataset(X_caption_val, features_df, tensor_images, y_val, ad_idx_val, user_idx_val), shuffle=False,
+        someDataset(X_caption_val, features_df, tensor_images, ad_type_list, y_val, ad_idx_val, user_idx_val), shuffle=False,
         batch_size=args['batch_size'], drop_last=True)
     test_loader = Data.DataLoader(
-        someDataset(X_caption_test, features_df, tensor_images, y_test, ad_idx_test, user_idx_test), shuffle=False,
+        someDataset(X_caption_test, features_df, tensor_images, ad_type_list, y_test, ad_idx_test, user_idx_test), shuffle=False,
         batch_size=args['batch_size'], drop_last=True)
 
     class_weights = compute_class_weight(class_weight='balanced', classes=np.unique(y_train), y=y_train)

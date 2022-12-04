@@ -1,6 +1,25 @@
 import torch
 import torch.nn as nn
 
+class model_baseline(nn.Module):
+    def __init__(self, arg) -> None:
+        super(model_baseline, self).__init__()
+        self.baseline_mlp = late_fusion_mlp(arg, 141 + 3072)
+        self.pool = nn.AdaptiveAvgPool2d((32, 32))
+    def forward(self, data_dict):
+        pool_image = self.pool(data_dict['image_inputs']).reshape(data_dict['image_inputs'].shape[0], -1)
+        scores = self.baseline_mlp(torch.cat((data_dict['user_input'], pool_image),dim=-1))
+        return scores
+
+class model_baseline_user_bert(nn.Module):
+    def __init__(self, arg) -> None:
+        super(model_baseline_user_bert, self).__init__()
+        self.baseline_mlp = late_fusion_mlp(arg, 128 + 3072)
+        self.pool = nn.AdaptiveAvgPool2d((32, 32))
+    def forward(self, data_dict):
+        pool_image = self.pool(data_dict['image_inputs']).reshape(data_dict['image_inputs'].shape[0], -1)
+        scores = self.baseline_mlp(torch.cat((data_dict['user_input'], pool_image),dim=-1))
+        return scores
 class caption_only_mlp(nn.Module):
     def __init__(self, arg, input_dim) -> None:
         super(caption_only_mlp, self).__init__()
@@ -41,7 +60,6 @@ class model_caption_only(nn.Module):
             self.caption_mlp = late_fusion_mlp(arg, 141+512)
         elif arg['caption_version'] == 'image_tuned':
             self.caption_mlp = late_fusion_mlp(arg, 141+512)
-
     def forward(self, data_dict):
         scores = self.caption_mlp(data_dict['caption_and_user_inputs'])
         return scores

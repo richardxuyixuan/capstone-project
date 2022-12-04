@@ -342,6 +342,293 @@ args6b['img_embs_size'] = 128
 args6b['optimizer'] = 'Adam' # 'Adam or SGD'
 args6b['use_scheduler'] = True
 args6b['use_bce'] = True
+
+args6c = dict()                 # batch size for training
+args6c['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+args6c['model_version'] = 'early_fusion' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+args6c['checkpoint_name'] = 'early_fusion_bce_non_aug_no_scheduler_lr_1e-2_bs_64.pth'
+args6c['data'] = 'non_augmented' # choose between 'augmented' and 'non_augmented'
+args6c['lr'] = 0.01                         # learning rate
+args6c['weight_decay'] = 1e-5
+args6c['batch_size'] = 64
+args6c['epochs'] = 25
+args6c['dropout'] = 0.2
+args6c['output_dim'] = 1                    # number of output classes
+args6c['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+args6c['img_embs_size'] = 128
+args6c['optimizer'] = 'Adam' # 'Adam or SGD'
+args6c['use_scheduler'] = False
+args6c['use_bce'] = True
+
+args6d = dict()                 # batch size for training
+args6d['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+args6d['model_version'] = 'early_fusion' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+args6d['checkpoint_name'] = 'early_fusion_focal_non_aug_no_scheduler_lr_1e-2_bs_64.pth'
+args6d['data'] = 'non_augmented' # choose between 'augmented' and 'non_augmented'
+args6d['lr'] = 0.01                         # learning rate
+args6d['weight_decay'] = 1e-5
+args6d['batch_size'] = 64
+args6d['epochs'] = 25
+args6d['dropout'] = 0.2
+args6d['output_dim'] = 2                    # number of output classes
+args6d['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+args6d['img_embs_size'] = 128
+args6d['optimizer'] = 'Adam' # 'Adam or SGD'
+args6d['use_scheduler'] = False
+args6d['use_focal_loss'] = True
+
+argse = dict()                 # batch size for training
+argse['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+argse['model_version'] = 'caption_only' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+argse['checkpoint_name'] = 'caption_only_bce_non_aug_no_scheduler_lr_1e-2_bs_64.pth'
+argse['data'] = 'non_augmented' # choose between 'augmented' and 'non_augmented'
+argse['lr'] = 0.01                         # learning rate
+argse['weight_decay'] = 1e-5
+argse['batch_size'] = 64
+argse['epochs'] = 25
+argse['dropout'] = 0.2
+argse['output_dim'] = 1                    # number of output classes
+argse['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+argse['img_embs_size'] = 128
+argse['optimizer'] = 'Adam' # 'Adam or SGD'
+argse['use_scheduler'] = False
+argse['use_bce'] = True
+
+argsf = dict()                 # batch size for training
+argsf['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+argsf['model_version'] = 'caption_only' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+argsf['checkpoint_name'] = 'caption_only_focal_non_aug_no_scheduler_lr_1e-2_bs_64.pth'
+argsf['data'] = 'non_augmented' # choose between 'augmented' and 'non_augmented'
+argsf['lr'] = 0.01                         # learning rate
+argsf['weight_decay'] = 1e-5
+argsf['batch_size'] = 64
+argsf['epochs'] = 25
+argsf['dropout'] = 0.2
+argsf['output_dim'] = 2                    # number of output classes
+argsf['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+argsf['img_embs_size'] = 128
+argsf['optimizer'] = 'Adam' # 'Adam or SGD'
+argsf['use_scheduler'] = False
+argsf['use_focal_loss'] = True
+
+argsg = dict()                 # batch size for training
+argsg['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+argsg['model_version'] = 'caption_only' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+argsg['checkpoint_name'] = 'caption_only_augmented_no_scheduler_lr_1e-2_bs_64.pth'
+argsg['data'] = 'augmented' # choose between 'augmented' and 'non_augmented'
+argsg['lr'] = 0.01                         # learning rate
+argsg['weight_decay'] = 1e-5
+argsg['batch_size'] = 64
+argsg['epochs'] = 25
+argsg['dropout'] = 0.2
+argsg['output_dim'] = 2                    # number of output classes
+argsg['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+argsg['img_embs_size'] = 128
+argsg['optimizer'] = 'Adam' # 'Adam or SGD'
+argsg['use_scheduler'] = False
+
+argsh = dict()                 # batch size for training
+argsh['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+argsh['model_version'] = 'image_only' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+argsh['checkpoint_name'] = 'image_only_bce_non_aug_no_scheduler_lr_1e-2_bs_64.pth'
+argsh['data'] = 'non_augmented' # choose between 'augmented' and 'non_augmented'
+argsh['lr'] = 0.01                         # learning rate
+argsh['weight_decay'] = 1e-5
+argsh['batch_size'] = 64
+argsh['epochs'] = 25
+argsh['dropout'] = 0.2
+argsh['output_dim'] = 1                    # number of output classes
+argsh['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+argsh['img_embs_size'] = 128
+argsh['optimizer'] = 'Adam' # 'Adam or SGD'
+argsh['use_scheduler'] = False
+argsh['use_bce'] = True
+
+argsi = dict()                 # batch size for training
+argsi['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+argsi['model_version'] = 'image_only' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+argsi['checkpoint_name'] = 'image_only_focal_non_aug_no_scheduler_lr_1e-2_bs_64.pth'
+argsi['data'] = 'non_augmented' # choose between 'augmented' and 'non_augmented'
+argsi['lr'] = 0.01                         # learning rate
+argsi['weight_decay'] = 1e-5
+argsi['batch_size'] = 64
+argsi['epochs'] = 25
+argsi['dropout'] = 0.2
+argsi['output_dim'] = 2                    # number of output classes
+argsi['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+argsi['img_embs_size'] = 128
+argsi['optimizer'] = 'Adam' # 'Adam or SGD'
+argsi['use_scheduler'] = False
+argsi['use_focal_loss'] = True
+
+argsj = dict()                 # batch size for training
+argsj['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+argsj['model_version'] = 'image_only' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+argsj['checkpoint_name'] = 'image_only_augmented_no_scheduler_lr_1e-2_bs_64.pth'
+argsj['data'] = 'augmented' # choose between 'augmented' and 'non_augmented'
+argsj['lr'] = 0.01                         # learning rate
+argsj['weight_decay'] = 1e-5
+argsj['batch_size'] = 64
+argsj['epochs'] = 25
+argsj['dropout'] = 0.2
+argsj['output_dim'] = 2                    # number of output classes
+argsj['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+argsj['img_embs_size'] = 128
+argsj['optimizer'] = 'Adam' # 'Adam or SGD'
+argsj['use_scheduler'] = False
+
+args_base = dict()                 # batch size for training
+args_base['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+args_base['model_version'] = 'baseline' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+args_base['checkpoint_name'] = 'baseline_bce_non_augmented_no_scheduler_lr_1e-2_bs_64.pth'
+args_base['data'] = 'non_augmented' # choose between 'augmented' and 'non_augmented'
+args_base['lr'] = 0.01                         # learning rate
+args_base['weight_decay'] = 1e-5
+args_base['batch_size'] = 64
+args_base['epochs'] = 25
+args_base['dropout'] = 0.2
+args_base['output_dim'] = 1                    # number of output classes
+args_base['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+args_base['img_embs_size'] = 128
+args_base['optimizer'] = 'Adam' # 'Adam or SGD'
+args_base['use_scheduler'] = False
+args_base['use_bce'] = True
+
+args_base1 = dict()                 # batch size for training
+args_base1['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+args_base1['model_version'] = 'baseline' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+args_base1['checkpoint_name'] = 'baseline_wce_non_augmented_no_scheduler_lr_1e-2_bs_64.pth'
+args_base1['data'] = 'non_augmented' # choose between 'augmented' and 'non_augmented'
+args_base1['lr'] = 0.01                         # learning rate
+args_base1['weight_decay'] = 1e-5
+args_base1['batch_size'] = 64
+args_base1['epochs'] = 25
+args_base1['dropout'] = 0.2
+args_base1['output_dim'] = 2                   # number of output classes
+args_base1['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+args_base1['img_embs_size'] = 128
+args_base1['optimizer'] = 'Adam' # 'Adam or SGD'
+args_base1['use_scheduler'] = False
+
+args_base2 = dict()                 # batch size for training
+args_base2['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+args_base2['model_version'] = 'baseline' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+args_base2['checkpoint_name'] = 'baseline_focal_non_augmented_no_scheduler_lr_1e-2_bs_64.pth'
+args_base2['data'] = 'non_augmented' # choose between 'augmented' and 'non_augmented'
+args_base2['lr'] = 0.01                         # learning rate
+args_base2['weight_decay'] = 1e-5
+args_base2['batch_size'] = 64
+args_base2['epochs'] = 25
+args_base2['dropout'] = 0.2
+args_base2['output_dim'] = 2                    # number of output classes
+args_base2['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+args_base2['img_embs_size'] = 128
+args_base2['optimizer'] = 'Adam' # 'Adam or SGD'
+args_base2['use_scheduler'] = False
+args_base2['use_focal_loss'] = True
+
+args_base3 = dict()                 # batch size for training
+args_base3['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+args_base3['model_version'] = 'baseline' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+args_base3['checkpoint_name'] = 'baseline_bce_no_scheduler_lr_1e-2_bs_64.pth'
+args_base3['data'] = 'augmented' # choose between 'augmented' and 'non_augmented'
+args_base3['lr'] = 0.01                         # learning rate
+args_base3['weight_decay'] = 1e-5
+args_base3['batch_size'] = 64
+args_base3['epochs'] = 25
+args_base3['dropout'] = 0.2
+args_base3['output_dim'] = 1                    # number of output classes
+args_base3['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+args_base3['img_embs_size'] = 128
+args_base3['optimizer'] = 'Adam' # 'Adam or SGD'
+args_base3['use_scheduler'] = False
+args_base3['use_bce'] = True
+
+args_base4 = dict()                 # batch size for training
+args_base4['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+args_base4['model_version'] = 'baseline' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+args_base4['checkpoint_name'] = 'baseline_bce_lr_1e-2_bs_64.pth'
+args_base4['data'] = 'augmented' # choose between 'augmented' and 'non_augmented'
+args_base4['lr'] = 0.01                         # learning rate
+args_base4['weight_decay'] = 1e-5
+args_base4['batch_size'] = 64
+args_base4['epochs'] = 25
+args_base4['dropout'] = 0.2
+args_base4['output_dim'] = 1                    # number of output classes
+args_base4['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+args_base4['img_embs_size'] = 128
+args_base4['optimizer'] = 'Adam' # 'Adam or SGD'
+args_base4['use_scheduler'] = True
+args_base4['use_bce'] = True
+
+args_base5 = dict()                 # batch size for training
+args_base5['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+args_base5['model_version'] = 'baseline_user_bert' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+args_base5['checkpoint_name'] = 'baseline_user_bert_bce_non_augmented_no_scheduler_lr_1e-2_bs_64.pth'
+args_base5['data'] = 'non_augmented' # choose between 'augmented' and 'non_augmented'
+args_base5['lr'] = 0.01                         # learning rate
+args_base5['weight_decay'] = 1e-5
+args_base5['batch_size'] = 64
+args_base5['epochs'] = 25
+args_base5['dropout'] = 0.2
+args_base5['output_dim'] = 1                    # number of output classes
+args_base5['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+args_base5['img_embs_size'] = 128
+args_base5['optimizer'] = 'Adam' # 'Adam or SGD'
+args_base5['use_scheduler'] = False
+args_base5['use_bce'] = True
+args_base5['user_bert'] = True
+
+args_base6 = dict()                 # batch size for training
+args_base6['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+args_base6['model_version'] = 'baseline' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+args_base6['checkpoint_name'] = 'baseline_5_class_wce_non_augmented_no_scheduler_lr_1e-2_bs_64.pth'
+args_base6['data'] = 'non_augmented' # choose between 'augmented' and 'non_augmented'
+args_base6['lr'] = 0.01                         # learning rate
+args_base6['weight_decay'] = 1e-5
+args_base6['batch_size'] = 64
+args_base6['epochs'] = 25
+args_base6['dropout'] = 0.2
+args_base6['output_dim'] = 5                    # number of output classes
+args_base6['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+args_base6['img_embs_size'] = 128
+args_base6['optimizer'] = 'Adam' # 'Adam or SGD'
+args_base6['use_scheduler'] = False
+
+args_base7 = dict()                 # batch size for training
+args_base7['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+args_base7['model_version'] = 'baseline' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+args_base7['checkpoint_name'] = 'baseline_5_class_focal_non_augmented_no_scheduler_lr_1e-2_bs_64.pth'
+args_base7['data'] = 'non_augmented' # choose between 'augmented' and 'non_augmented'
+args_base7['lr'] = 0.01                         # learning rate
+args_base7['weight_decay'] = 1e-5
+args_base7['batch_size'] = 64
+args_base7['epochs'] = 25
+args_base7['dropout'] = 0.2
+args_base7['output_dim'] = 5                    # number of output classes
+args_base7['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+args_base7['img_embs_size'] = 128
+args_base7['optimizer'] = 'Adam' # 'Adam or SGD'
+args_base7['use_scheduler'] = False
+args_base7['use_focal_loss'] = True
+
+args_base8 = dict()                 # batch size for training
+args_base8['caption_version'] = 'short'  # 'short', 'long', 'old', 'image', 'image_tuned'
+args_base8['model_version'] = 'baseline' # choose between 'image_only', 'caption_only', 'early_fusion', 'late_fusion'
+args_base8['checkpoint_name'] = 'baseline_5_class_ce_non_augmented_no_scheduler_lr_1e-2_bs_64.pth'
+args_base8['data'] = 'non_augmented' # choose between 'augmented' and 'non_augmented'
+args_base8['lr'] = 0.01                         # learning rate
+args_base8['weight_decay'] = 1e-5
+args_base8['batch_size'] = 64
+args_base8['epochs'] = 25
+args_base8['dropout'] = 0.2
+args_base8['output_dim'] = 5                    # number of output classes
+args_base8['hidden_dim'] = [512, 256, 128, 64]  # number of hidden dimensions
+args_base8['img_embs_size'] = 128
+args_base8['optimizer'] = 'Adam' # 'Adam or SGD'
+args_base8['use_scheduler'] = False
+args_base8['no_class_weights'] = True
+
 def train(args):
     print(args['checkpoint_name'])
     # Build data loader
@@ -374,11 +661,11 @@ def train(args):
             data_dict['image_inputs'] = batch[2].float().to(device)
             if 'use_bce' in args.keys():
                 if args['use_bce'] == True:
-                    labels = batch[3].float().to(device).unsqueeze(-1)
+                    labels = batch[4].float().to(device).unsqueeze(-1)
                 else:
-                    labels = batch[3].type(torch.LongTensor).to(device)
+                    labels = batch[4].type(torch.LongTensor).to(device)
             else:
-                labels = batch[3].type(torch.LongTensor).to(device)
+                labels = batch[4].type(torch.LongTensor).to(device)
             outputs = model(data_dict)
             loss = criterion(outputs, labels)
             loss.backward()
@@ -409,11 +696,11 @@ def train(args):
                 data_dict['image_inputs'] = batch[2].float().to(device)
                 if 'use_bce' in args.keys():
                     if args['use_bce'] == True:
-                        labels = batch[3].float().to(device).unsqueeze(-1)
+                        labels = batch[4].float().to(device).unsqueeze(-1)
                     else:
-                        labels = batch[3].type(torch.LongTensor).to(device)
+                        labels = batch[4].type(torch.LongTensor).to(device)
                 else:
-                    labels = batch[3].type(torch.LongTensor).to(device)
+                    labels = batch[4].type(torch.LongTensor).to(device)
                 outputs = model(data_dict)
                 loss = criterion(outputs, labels)
                 val_loss.append(loss.item())
@@ -452,4 +739,21 @@ def train(args):
 # train(args4n)
 # train(args5n)
 # train(args7n)
-train(args6b)
+# train(args6b)
+# train(args6c)
+# train(args6d)
+# train(argse)
+# train(argsf)
+# train(argsg)
+# train(argsh)
+# train(argsi)
+# train(argsj)
+# train(args_base)
+# train(args_base1)
+# train(args_base2)
+# train(args_base3)
+# train(args_base4)
+# train(args_base5)
+# train(args_base6)
+# train(args_base7)
+train(args_base8)
