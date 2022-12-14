@@ -19,10 +19,14 @@
 **Some strategies to consider:**
 1. Try the segmented images  on CNN
 
-**BERT related reference:**
+**BERT related references:**
 1. ```captions_to_BERT.py```: Convert captions to BERT embeddings (of dimension 768);
-2. dim_reduct.py: Add and train a PCA layer for the model to reduce the output dimension to 128;
-3. reduced_BERT.py: Convert captions to reduced BERT embeddings (of dimension 128), using the model trained by ```dim_reduct.py```
+2. ```dim_reduct.py```: Add and train a PCA layer for the model to reduce the output dimension to 128;
+3. ```reduced_BERT.py```: Convert captions to reduced BERT embeddings (of dimension 128), using the model trained by ```dim_reduct.py```.
+
+**CLIP related references:**
+1. ```img_emb.py```: Convert ads images to CLIP embeddings (of dimension 512);
+2. ```finetune_CLIP.py```: Finetune clip models using caption-ads pairs in the given dataset and save the model. 
 
 **Other Things to Try**
 
