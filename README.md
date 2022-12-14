@@ -19,6 +19,11 @@
 **Some strategies to consider:**
 1. Try the segmented images  on CNN
 
+**BERT related reference:**
+1. ```captions_to_BERT.py```: Convert captions to BERT embeddings (of dimension 768);
+2. dim_reduct.py: Add and train a PCA layer for the model to reduce the output dimension to 128;
+3. reduced_BERT.py: Convert captions to reduced BERT embeddings (of dimension 128), using the model trained by ```dim_reduct.py```
+
 **Other Things to Try**
 
 Might need to retrain early and late fusion without PCA
