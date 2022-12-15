@@ -21,7 +21,7 @@ pandas 1.5.1
 
 **Model Evaluation**
 
-1. To use the best model, please download the checkpoint from [here](https://drive.google.com/file/d/1ruh2ktmOB24L3emESONHkfbiDu3P6rSl/view?usp=sharing) and place them on the same directory as ```eval_pipeline.py```. Alternatively, you can use evaluate any other experiments that you have trained on. See note 1 below on how to do so.
+1. To use the best model, please download the checkpoint from [here](https://drive.google.com/file/d/1ruh2ktmOB24L3emESONHkfbiDu3P6rSl/view?usp=sharing) and place it on the same directory as ```eval_pipeline.py```. Alternatively, you can evaluate any other experiments that you have trained on. See note 1 below on how to do so.
 2. Run ```eval_pipeline.py```
 
 Note 1: The arguments provided in ```eval_pipeline.py``` are by default the setting for the best model checkpoint. However, feel free to change it. For example, if you performed any training, you may wish to update the hyperparameters do match the training hyperparameter settings.
