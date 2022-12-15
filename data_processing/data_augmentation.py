@@ -27,8 +27,8 @@ def increase_brightness(img, value=30):
 
 
 if __name__ == '__main__':
-      read_file = "/home/skyler/codebase/year4/fall/mie429/raw_imgs/1_1.png"
-      write_file = "/home/skyler/codebase/year4/fall/mie429/aug_imgs/1_1.png"
+      read_file = "1_1.png"
+      write_file = "1_1.png"
       augmentation_img(read_file, write_file)
 
 

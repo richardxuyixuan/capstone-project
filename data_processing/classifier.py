@@ -299,12 +299,12 @@ def test(annotation_file, img_dir, classifier_path,resnet_path):
 
 if __name__ == '__main__':
       ### to train the model 
-      annotation_file = "/home/skyler/codebase/year4/fall/mie429/ads_category.csv"
-      img_dir = "/home/skyler/codebase/year4/fall/mie429/raw_imgs"
+      annotation_file = "ads_category.csv"
+      img_dir = "raw_imgs"
       model_path = train(annotation_file, img_dir, batch_size=4,learning_rate=0.001,num_epochs=30)
       ### plot train_val_curve
       plot_train_val_curve(model_path)
       ### test model on test dataset 
-      resnet_path = "/home/skyler/codebase/year4/fall/mie429/GenerativeImage2Text/resnet50"
-      classifier_path = "/home/skyler/codebase/year4/fall/mie429/GenerativeImage2Text/fc"
+      resnet_path = "resnet50"
+      classifier_path = "fc"
       test(annotation_file, img_dir, classifier_path,resnet_path)

@@ -32,8 +32,9 @@ Note 1: The arguments provided in ```eval_pipeline.py``` are by default the sett
 Note 2: The arguments provided in ```train_pipeline.py``` are by default the setting for the best model checkpoint. However, feel free to change it. For example, you may wish to set the output_dim to 5 to see how the model performs for classification performance on 5 classes.
 
 **How to generate a caption for a new advertisement image:**
-1. open data_processing.py, run img_process function. This function requires four inputs. input_image_path is the path to ad image, output_image_path is the path to processed ad image.resnet_weights_path and classifier_weights_path are the paths to saved pretrained models weights. img_process function will read the ad image from input_image_path and write a processed image to output_image_path. 
-2. Download the GenerativeImage2Text repo from Github. Follow their README file to perform inference on a single image. Here's an example of the command line:
+1. Download the following checkpoints [here](https://drive.google.com/file/d/1tKHj7DSDtOUBUGrLU1zkNWEE1AbLZT5Z/view?usp=sharing) and [here](https://drive.google.com/file/d/1H-sY3C6q72a4eu4tAGpqi7oHtmd3irwX/view?usp=sharing) and place them on the same directory as ```data_processing.py```
+2. ```data_processing.py```, run img_process function. This function requires four inputs. input_image_path is the path to ad image, output_image_path is the path to processed ad image.resnet_weights_path and classifier_weights_path are the paths to saved pretrained models weights. img_process function will read the ad image from input_image_path and write a processed image to output_image_path. 
+3. Download the GenerativeImage2Text repo from [Github](https://github.com/microsoft/GenerativeImage2Text). Follow their README file to perform inference on a single image. Here's an example of the command line:
 ```
 AZFUSE_TSV_USE_FUSE=1 python3 -m generativeimage2text.inference -p "{'type': 'test_git_inference_single_image', 
       'image_path': './GenerativeImage2Text/aux_data/images', \
@@ -44,12 +45,12 @@ AZFUSE_TSV_USE_FUSE=1 python3 -m generativeimage2text.inference -p "{'type': 'te
 ```
 The model name should be GIT_LARGE_TEXTCAPS, the image should be placed inside aux_data/images under the GenerativeImage2Text folder. Then a txt file with the generated capstion will be generated under the 'result_file' folder. 
 
-**How to train a new classifier:**
-1. open classifier.py, run train() function. This function requires five inputs. annotation_file is the path to a csv file which contains the ground truth label for each advertisement image. img_dir is the path to a folder which contains all advertisement images (incluidng train, val, test). Other inputs are the hyperparameter settings. Feel free to change it. 
+**How to train the classifier in the class-aware image segmentation tool from scratch**
+1. ```classifier.py```, run train() function. This function requires five inputs. annotation_file is the path to a csv file which contains the ground truth label for each advertisement image. img_dir is the path to a folder which contains all advertisement images (incluidng train, val, test). Other inputs are the hyperparameter settings. Feel free to change it. 
 
 
 **How to augment data:**
-1. open data_augmentation.py and run augmentation_img() function. This function requires a input path to read the image and a output path to write the augmented image. The function will apply a blur filter and increase brightness to the image. 
+1. ```data_augmentation.py``` and run augmentation_img() function. This function requires a input path to read the image and a output path to write the augmented image. The function will apply a blur filter and increase brightness to the image. 
 
 **BERT related references:**
 1. ```captions_to_BERT.py```: Convert captions to BERT embeddings (of dimension 768);

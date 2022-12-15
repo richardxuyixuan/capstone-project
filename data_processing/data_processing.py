@@ -81,9 +81,9 @@ def img_process(input_image, output_image, resnet_weights_path, classifier_weigh
       return True
 
 if __name__ == '__main__':
-      resnet_weights_path = "/home/skyler/codebase/year4/fall/mie429/GenerativeImage2Text/resnet50"
-      classifier_weights_path = "/home/skyler/codebase/year4/fall/mie429/GenerativeImage2Text/fc"
-      input_image = "/home/skyler/codebase/year4/fall/mie429/raw_imgs/1_10.png"
-      output_image = "/home/skyler/codebase/year4/fall/mie429/1_10.png"
+      resnet_weights_path = "resnet50.pth"
+      classifier_weights_path = "fc.pth"
+      input_image = "1_10.png"
+      output_image = "1_10.png"
       img_process(input_image, output_image, resnet_weights_path, classifier_weights_path)
       
