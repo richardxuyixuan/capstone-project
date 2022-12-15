@@ -2,9 +2,9 @@
 
 ## Capstone Project for AdView
 
-### Yixuan Xu, Sumin Lee, Jianzhong (Ken) Shi, Yutong Wang, Jiarui Zhang
+A project by Yixuan Xu, Sumin Lee, Jianzhong (Ken) Shi, Yutong Wang, Jiarui Zhang
 
-### Special thanks to the AdView team for their continuous support!
+Special thanks to the AdView team for their continuous support!
 
 **First Time Use**
 
