@@ -40,27 +40,21 @@ def initialize_model(arg, class_weights, dataloader, resnet_model):
         optimizer = optim.Adam(model.parameters(), lr=arg['lr'], weight_decay=arg['weight_decay'])
     elif arg['optimizer'] == 'SGD':
         optimizer = optim.SGD(model.parameters(), lr= arg['lr'], momentum=0.9)
-    if 'use_focal_loss' in arg.keys():
-        if arg['use_focal_loss'] == True:
-            criterion = torch.hub.load(
+    if arg['use_focal_loss'] == True:
+        criterion = torch.hub.load(
                 'adeelh/pytorch-multi-class-focal-loss',
                 model='FocalLoss',
                 alpha=class_weights,
                 gamma=2,
                 reduction='mean',
                 force_reload=False
-            )
-        else:
-            criterion = nn.CrossEntropyLoss(weight=class_weights)  # WCE
-    elif 'use_bce' in arg.keys():
-        if arg['use_bce'] == True:
-            criterion = nn.BCEWithLogitsLoss() # BCE
+        )
+    elif arg['use_bce'] == True:
+        criterion = nn.BCEWithLogitsLoss() # BCE
+    elif arg['no_class_weights'] == True:
+        criterion = nn.CrossEntropyLoss()
     else:
         criterion = nn.CrossEntropyLoss(weight=class_weights)  # WCE
-
-    if 'no_class_weights' in arg.keys():
-        if arg['no_class_weights']:
-            criterion = nn.CrossEntropyLoss()
 
     # criterion = nn.BCELoss()
     if arg['use_scheduler']:
